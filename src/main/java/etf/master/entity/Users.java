@@ -1,15 +1,30 @@
 package etf.master.entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="users")
-public class Users implements java.io.Serializable{
+public class Users {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "userId")
+	private int userId;
 	
 	@Column(name = "username")
 	private String username;
@@ -32,9 +47,6 @@ public class Users implements java.io.Serializable{
 	@Column(name="address")
 	private String address;
 	
-	@Column(name="dateOfBirth")
-	private Date dateOfBirth;
-	
 	@Column(name="number")
 	private int number;
 	
@@ -50,40 +62,77 @@ public class Users implements java.io.Serializable{
 	@Column(name="biograohy")
 	private String biography;
 	
+	@Column(name="image")
+	private String image;
+	
+	@Column(name="roleId")
+	private int roleId;
+	
+	@Transient
+	private String role;
+	
+	/*@JsonBackReference
+	@OneToMany (mappedBy = "users")
+	private Set<UserTour> userTours = new HashSet<UserTour>(0);*/
+	
 	public Users() {
 		super();
 	}
 
 	public Users(String username, String password) {
-		super();
+		System.out.println("mali konstruktroe");
+		//super();
 		this.username = username;
 		this.password = password;
 	}
 
-	public Users(String username, String password, String firstName, String lastName, String telephone, String email,
-			Date dateOfBirth, int number, String type, String licence, int licenceYear, String address, String biography) {
-		super();
+	public Users(String username, String password, String firstName, String lastName, String telephone, String email, int roleId,
+			 int number, String type, String licence, int licenceYear, String address, String biography) {
+		//super();
+		System.out.println("veliki konstruktroe");
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.telephone = telephone;
 		this.email = email;
-		this.dateOfBirth = dateOfBirth;
 		this.number = number;
 		this.type = type;
 		this.licence = licence;
 		this.licenceYear = licenceYear;
 		this.address=address;
 		this.biography=biography;
+		this.roleId = roleId;
+		this.role = "MIKI";
+	}
+	
+	public Users(int userId, String username, String password, String firstName, String lastName, String telephone,
+			String email, String address, int number, String type, String licence, int licenceYear, String biography,
+			String image, int roleId, String role) {
+		super();
+		this.userId = userId;
+		this.username = username;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.telephone = telephone;
+		this.email = email;
+		this.address = address;
+		this.number = number;
+		this.type = type;
+		this.licence = licence;
+		this.licenceYear = licenceYear;
+		this.biography = biography;
+		this.image = image;
+		this.roleId = roleId;
+		this.role = role;
 	}
 
-	@Id
 	public String getUsername() {
         return username;
     }
 
-	@Id
+	
     public void setUsername(String username) {
         this.username = username;
     }
@@ -128,13 +177,7 @@ public class Users implements java.io.Serializable{
 		this.email = email;
 	}
 
-	public Date getDateOfBirth() {
-		return dateOfBirth;
-	}
-
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
+	
 
 	public int getNumber() {
 		return number;
@@ -183,5 +226,50 @@ public class Users implements java.io.Serializable{
 	public void setBiography(String biography) {
 		this.biography = biography;
 	}
-    
+
+	@Id
+	public int getUserId() {
+		return userId;
+	}
+
+	@Id
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public int getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(int roleId) {
+		this.roleId = roleId;
+	}
+
+	@Transient
+	public String getRole() {
+		return role;
+	}
+
+	@Transient
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+	
+	/*public Set<UserTour> getUserTours() {
+		return userTours;
+	}
+
+	public void setUserTours(Set<UserTour> userTours) {
+		this.userTours = userTours;
+	}*/
+	
+	
 }

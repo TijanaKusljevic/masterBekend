@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,11 +42,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDetailsService = userDetailsService;
        // this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+    
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+         
+        return authProvider;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
+        		.antMatchers("/images/**").anonymous()
                 .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
+                .antMatchers(HttpMethod.GET, "/api//guides").hasAnyAuthority("USER", "GUIDE", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/guide/{id}").hasAnyAuthority("USER", "GUIDE", "ADMIN")
+            
+                //.antMatchers(HttpMethod.GET, "/tour/allTours").hasAnyAuthority("GUIDE")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new AuthenticationFilter(authenticationManager()))
@@ -60,6 +75,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     	list.add("token");
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration c = new CorsConfiguration().applyPermitDefaultValues();
+        c.addAllowedMethod(HttpMethod.DELETE);
+        c.addAllowedMethod(HttpMethod.POST);
+        c.addAllowedMethod(HttpMethod.GET);
         c.setExposedHeaders(list);
         source.registerCorsConfiguration("/**", c);
         return source;
